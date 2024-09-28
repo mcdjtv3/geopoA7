@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Démarche Marketing & Définition des Marchés</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>QCM ENTRAINEMENT - Multilateralism and New Global Challenges</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "What is bilateralism in international relations?", choices: ["A system where multiple countries cooperate to achieve a common goal", "A direct negotiation between two states to resolve issues", "A policy where a country acts alone without consulting others", "A strategy where multiple countries form economic unions"], correct: 1 },
+        { question: "How does multilateralism differ from bilateralism?", choices: ["Multilateralism involves cooperation among at least three states, while bilateralism involves just two states", "Multilateralism focuses on economic agreements, while bilateralism focuses on military alliances", "Bilateralism always results in more efficient decision-making compared to multilateralism", "Multilateralism is a regional strategy, while bilateralism is used in global forums"], correct: 0 },
+        { question: "Why did the post-World War I criticism of bilateralism arise?", choices: ["Bilateralism was seen as a cause of global conflicts and thus led to the creation of multilateral bodies like the League of Nations", "Bilateralism helped to avoid wars, but was criticized for being economically ineffective", "Bilateralism promoted regional stability but caused economic decline", "The system allowed for free trade but failed to address military issues"], correct: 0 },
+        { question: "Which institution exemplifies the formalization of multilateralism after 1945?", choices: ["The European Union", "The World Health Organization (WHO)", "The United Nations (UN)", "The G7"], correct: 2 },
+        { question: "What is the primary role of international organizations (IOs)?", choices: ["To act independently of states in creating international law", "To represent non-state actors in international decision-making", "To facilitate cooperation among states and produce international law based on agreements", "To enforce military strategies between global powers"], correct: 2 },
+        { question: "Which of the following is a challenge to the United Nations Security Council (UNSC)?", choices: ["Lack of veto power for the permanent members", "Dominance by the P5 members, which limits representation of the global diversity", "Too many regional players having seats in the UNSC", "The expansion of the UNSC to over 50 members"], correct: 1 },
+        { question: "What is a reason for the demand for UNSC reform?", choices: ["The UNSC has never had more than 10 members since its creation", "Emerging powers like Brazil, India, and South Africa demand inclusion in decision-making", "The veto system no longer exists, leading to inefficient resolutions", "The UNSC has shifted to focus solely on economic crises rather than security issues"], correct: 1 },
+        { question: "Why is the UN’s track record considered mixed when it comes to international security?", choices: ["The UN has only been successful in economic resolutions, not military interventions", "The UN’s successes in conflicts like Kuwait (1991) were followed by failures in regions such as Somalia and Yugoslavia", "The UN’s role in the Cold War rendered it irrelevant after 1991", "The UN focuses too much on environmental issues, neglecting security crises"], correct: 1 },
+        { question: "Which is a recent example of multilateralism in action?", choices: ["The Paris Agreement (COP21) to address climate change", "The NATO withdrawal from Afghanistan", "The establishment of the BRICS coalition", "The creation of the Silk Road project"], correct: 0 },
+        { question: "Which global initiative was started by Germany and France to defend multilateralism?", choices: ["The Alliance for Multilateralism", "The Belt and Road Initiative", "The Treaty of Westphalia", "The Global Economic Forum"], correct: 0 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+
+
+</html>
